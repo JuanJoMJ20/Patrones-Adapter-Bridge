@@ -1,28 +1,71 @@
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("========== REPRODUCTOR ==========");
-        
-        System.out.print("Ingrese el nombre de la canción: ");
-        String song = scanner.nextLine();
-        System.out.print("Ingrese el formato (MP3 o WAV): ");
-        String format = scanner.nextLine();
+public class Main extends JFrame {
+    private JTextField songField;
+    private JComboBox<String> formatBox;
+    private JComboBox<String> deviceBox;
+    private JTextArea logArea;
 
+    public Main() {
+        // Configuración de la ventana
+        setTitle("Reproductor Hi-Fi v3.0");
+        setSize(400, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        // Componentes de la Interfaz
+        add(new JLabel("Nombre de la canción:"));
+        songField = new JTextField(20);
+        add(songField);
+
+        add(new JLabel("Formato de audio:"));
+        formatBox = new JComboBox<>(new String[]{"MP3", "WAV"});
+        add(formatBox);
+
+        add(new JLabel("Dispositivo de salida:"));
+        deviceBox = new JComboBox<>(new String[]{"Parlantes", "Audífonos"});
+        add(deviceBox);
+
+        JButton playButton = new JButton("Reproducir Ahora");
+        add(playButton);
+
+        logArea = new JTextArea(10, 30);
+        logArea.setEditable(false);
+        add(new JScrollPane(logArea));
+
+        // Lógica del botón
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                executeLogic();
+            }
+        });
+    }
+
+    private void executeLogic() {
+        String song = songField.getText();
+        String format = (String) formatBox.getSelectedItem();
+        String deviceType = (String) deviceBox.getSelectedItem();
+
+        if (song.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor ingrese una canción");
+            return;
+        }
+
+        // --- Aplicando Patrón ADAPTER ---
         OldWavPlayer legacyEngine = new OldWavPlayer();
         AudioTarget adapter = new Mp3ToWavAdapter(legacyEngine);
+        
+        logArea.append("\n--- Procesando Audio ---");
         adapter.playAudio(format, song + "." + format.toLowerCase());
+        logArea.append("\nAdaptador: Formato " + format + " procesado.");
 
-        System.out.println("\n¿Por dónde desea escuchar la música?");
-        System.out.println("1. Parlantes");
-        System.out.println("2. Audífonos");
-        System.out.print("Seleccione una opción: ");
-        int option = scanner.nextInt();
-
+        // --- Aplicando Patrón BRIDGE ---
         OutputDevice selectedDevice;
-        if (option == 1) {
+        if (deviceType.equals("Parlantes")) {
             selectedDevice = new SpeakerDevice();
         } else {
             selectedDevice = new HeadphonesDevice();
@@ -30,9 +73,14 @@ public class Main {
 
         MusicPlayer player = new AdvancedPlayer(selectedDevice);
         player.play(song);
+        logArea.append("\nBridge: Sonando en " + deviceType);
+        logArea.append("\n-----------------------");
+    }
 
-        System.out.println("\n===========================================");
-        System.out.println("Gracias por usar el Reproductor. ¡Disfrute su música!");
-        scanner.close();
+    public static void main(String[] args) {
+        // Ejecutar la interfaz gráfica
+        SwingUtilities.invokeLater(() -> {
+            new Main().setVisible(true);
+        });
     }
 }
