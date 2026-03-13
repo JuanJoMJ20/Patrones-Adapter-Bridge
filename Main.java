@@ -1,26 +1,40 @@
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("===== SISTEMA DE AUDIO INICIADO =====");
-
-        // --- DEMOSTRACIÓN ADAPTER ---
-        System.out.println("\n[1] Probando Compatibilidad (Patrón Adapter):");
-        OldWavPlayer legacyEngine = new OldWavPlayer();
-        AudioTarget playerAdapter = new Mp3ToWavAdapter(legacyEngine);
-        playerAdapter.playAudio("MP3", "rock_clásico.mp3");
-
-        // --- DEMOSTRACIÓN BRIDGE ---
-        System.out.println("\n[2] Probando Dispositivos de Salida (Patrón Bridge):");
+        Scanner scanner = new Scanner(System.in);
         
-        // Caso A: Usando Parlantes
-        OutputDevice speakers = new SpeakerDevice();
-        MusicPlayer system1 = new AdvancedPlayer(speakers);
-        system1.play("Camcion No. 5");
+        System.out.println("========== REPRODUCTOR HI-FI v2.0 ==========");
+        
+        // 1. Lógica del Adapter
+        System.out.print("Ingrese el nombre de la canción: ");
+        String song = scanner.nextLine();
+        System.out.print("Ingrese el formato (MP3 o WAV): ");
+        String format = scanner.nextLine();
 
-        // Caso B: Cambiando a Audífonos
-        OutputDevice headphones = new HeadphonesDevice();
-        MusicPlayer system2 = new AdvancedPlayer(headphones);
-        system2.play("Podcast de Tecnología");
+        OldWavPlayer legacyEngine = new OldWavPlayer();
+        AudioTarget adapter = new Mp3ToWavAdapter(legacyEngine);
+        adapter.playAudio(format, song + "." + format.toLowerCase());
 
-        System.out.println("\n===== CIERRE DEL SISTEMA =====");
+        // 2. Lógica del Bridge
+        System.out.println("\n¿Por dónde desea escuchar la música?");
+        System.out.println("1. Parlantes");
+        System.out.println("2. Audífonos");
+        System.out.print("Seleccione una opción: ");
+        int option = scanner.nextInt();
+
+        OutputDevice selectedDevice;
+        if (option == 1) {
+            selectedDevice = new SpeakerDevice();
+        } else {
+            selectedDevice = new HeadphonesDevice();
+        }
+
+        MusicPlayer player = new AdvancedPlayer(selectedDevice);
+        player.play(song);
+
+        System.out.println("\n===========================================");
+        System.out.println("Disfrute su música - Taller Finalizado");
+        scanner.close();
     }
 }
