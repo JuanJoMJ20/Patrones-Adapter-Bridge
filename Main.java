@@ -4,9 +4,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("========== REPRODUCTOR HI-FI v2.0 ==========");
+        System.out.println("========== REPRODUCTOR ==========");
         
-        // 1. Lógica del Adapter
         System.out.print("Ingrese el nombre de la canción: ");
         String song = scanner.nextLine();
         System.out.print("Ingrese el formato (MP3 o WAV): ");
@@ -16,7 +15,6 @@ public class Main {
         AudioTarget adapter = new Mp3ToWavAdapter(legacyEngine);
         adapter.playAudio(format, song + "." + format.toLowerCase());
 
-        // 2. Lógica del Bridge
         System.out.println("\n¿Por dónde desea escuchar la música?");
         System.out.println("1. Parlantes");
         System.out.println("2. Audífonos");
@@ -34,7 +32,7 @@ public class Main {
         player.play(song);
 
         System.out.println("\n===========================================");
-        System.out.println("Disfrute su música - Taller Finalizado");
+        System.out.println("Gracias por usar el Reproductor. ¡Disfrute su música!");
         scanner.close();
     }
 }
