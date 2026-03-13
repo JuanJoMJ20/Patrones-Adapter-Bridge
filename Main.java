@@ -1,3 +1,5 @@
+//Interfaz Gráfica
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,13 +12,11 @@ public class Main extends JFrame {
     private JTextArea logArea;
 
     public Main() {
-        // Configuración de la ventana
         setTitle("Reproductor Hi-Fi v3.0");
         setSize(400, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new FlowLayout());
 
-        // Componentes de la Interfaz
         add(new JLabel("Nombre de la canción:"));
         songField = new JTextField(20);
         add(songField);
@@ -36,7 +36,6 @@ public class Main extends JFrame {
         logArea.setEditable(false);
         add(new JScrollPane(logArea));
 
-        // Lógica del botón
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -55,7 +54,7 @@ public class Main extends JFrame {
             return;
         }
 
-        // --- Aplicando Patrón ADAPTER ---
+        // ADAPTER
         OldWavPlayer legacyEngine = new OldWavPlayer();
         AudioTarget adapter = new Mp3ToWavAdapter(legacyEngine);
         
@@ -63,7 +62,7 @@ public class Main extends JFrame {
         adapter.playAudio(format, song + "." + format.toLowerCase());
         logArea.append("\nAdaptador: Formato " + format + " procesado.");
 
-        // --- Aplicando Patrón BRIDGE ---
+        //BRIDG
         OutputDevice selectedDevice;
         if (deviceType.equals("Parlantes")) {
             selectedDevice = new SpeakerDevice();
@@ -78,7 +77,7 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Ejecutar la interfaz gráfica
+
         SwingUtilities.invokeLater(() -> {
             new Main().setVisible(true);
         });
